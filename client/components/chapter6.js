@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import * as legend from 'd3-svg-legend';
-import chartFactory, {
+import {
   fixateColors,
   addRoot,
   colorScale as color,
@@ -16,9 +16,8 @@ const getMajorHouses = data => addRoot(data, 'itemLabel', 'fatherLabel', 'Wester
       if (d.fatherLabel === 'Westeros') {
         const childrenLen = a.filter(e => e.fatherLabel === d.itemLabel).length;
         return childrenLen > 0 ? d : undefined;
-      } else {
-        return d;
       }
+      return d;
     })
     .filter(i => i);
 
@@ -52,8 +51,8 @@ GoTChart.tree = function Tree(_data) {
 
   const layout = d3.tree()
     .size([
-      this.innerWidth,
-      this.innerHeight,
+      this.width,
+      this.height,
     ]);
 
   fixateColors(houseNames(root), 'id');
@@ -97,7 +96,7 @@ GoTChart.tree = function Tree(_data) {
   this.container
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(0, ${this.innerHeight / 2})`)
+    .attr('transform', `translate(0, ${this.height / 2})`)
     .call(legendGenerator);
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));
@@ -116,8 +115,8 @@ GoTChart.cluster = function Cluster(_data) {
 
   const layout = d3.cluster()
     .size([
-      this.innerHeight,
-      this.innerWidth - 150,
+      this.height,
+      this.width - 150,
     ]);
 
   const links = layout(root)
@@ -158,7 +157,7 @@ GoTChart.cluster = function Cluster(_data) {
   this.container
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(${this.innerWidth - 100}, 0)`)
+    .attr('transform', `translate(${this.width - 100}, 0)`)
     .call(l);
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));
@@ -179,8 +178,8 @@ GoTChart.treemap = function Treemap(_data) {
 
   const layout = d3.treemap()
     .size([
-      this.innerWidth - 100,
-      this.innerHeight,
+      this.width - 100,
+      this.height,
     ])
     .padding(cellPadding);
 
@@ -202,7 +201,7 @@ GoTChart.treemap = function Treemap(_data) {
   this.container
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(${this.innerWidth - 100}, ${cellPadding})`)
+    .attr('transform', `translate(${this.width - 100}, ${cellPadding})`)
     .call(legend.legendColor().scale(houseColors));
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));
@@ -223,8 +222,8 @@ GoTChart.partition = function Partition(_data) {
 
   const layout = d3.partition()
     .size([
-      this.innerWidth - 175,
-      this.innerHeight,
+      this.width - 175,
+      this.height,
     ])
     .padding(2)
     .round(true);
@@ -247,7 +246,7 @@ GoTChart.partition = function Partition(_data) {
   this.container
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(${this.innerWidth - 100}, 0)`)
+    .attr('transform', `translate(${this.width - 100}, 0)`)
     .call(legend.legendColor().scale(houseColors));
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));
@@ -257,7 +256,7 @@ GoTChart.radialPartition = function RadialPartition(_data) {
   const data = getMajorHouses(_data).map((d, i, a) => Object.assign(d, {
     screentime: a.filter(v => v.fatherLabel === d.itemLabel).length ? 0 : d.screentime,
   }));
-  const radius = Math.min(this.innerWidth, this.innerHeight) / 2;
+  const radius = Math.min(this.width, this.height) / 2;
 
   const stratify = d3.stratify()
     .parentId(d => d.fatherLabel)
@@ -268,13 +267,13 @@ GoTChart.radialPartition = function RadialPartition(_data) {
     .sort(null);
 
   const houseColors = color.copy().domain(root.ancestors().shift().children.map(
-    d => d.id.split(' ')[d.id.split(' ').length - 1])
+    d => d.id.split(' ')[d.id.split(' ').length - 1]),
   );
 
   const layout = d3.partition()
     .size([
-      this.innerWidth / 2,
-      this.innerHeight / 2,
+      this.width / 2,
+      this.height / 2,
     ])
     .padding(1)
     .round(true);
@@ -294,7 +293,7 @@ GoTChart.radialPartition = function RadialPartition(_data) {
   const nodes = this.container
   .append('g')
   .attr('class', 'nodes')
-  .attr('transform', `translate(${this.innerWidth / 2}, ${this.innerHeight / 2})`)
+  .attr('transform', `translate(${this.width / 2}, ${this.height / 2})`)
   .selectAll('.node')
     .data(root.descendants().slice(1))
     .enter()
@@ -309,7 +308,7 @@ GoTChart.radialPartition = function RadialPartition(_data) {
   this.container
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(${this.innerWidth - 100}, 0)`)
+    .attr('transform', `translate(${this.width - 100}, 0)`)
     .call(legend.legendColor().scale(houseColors));
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));
@@ -331,8 +330,8 @@ GoTChart.pack = function Pack(_data) {
 
   const layout = d3.pack()
     .size([
-      this.innerWidth - 100,
-      this.innerHeight,
+      this.width - 100,
+      this.height,
     ]);
 
   layout(root);
@@ -350,7 +349,7 @@ GoTChart.pack = function Pack(_data) {
   this.container
     .append('g')
     .attr('id', 'legend')
-    .attr('transform', `translate(${this.innerWidth - 100}, ${this.innerHeight / 2})`)
+    .attr('transform', `translate(${this.width - 100}, ${this.height / 2})`)
     .call(legend.legendColor().scale(houseColors));
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));

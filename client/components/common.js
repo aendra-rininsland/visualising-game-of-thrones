@@ -38,17 +38,17 @@ export function addRoot(data, itemKey, parentKey, joinValue) {
 }
 
 export function linkHorizontal(d) {
-  return "M" + d.source.x + "," + d.source.y
-      + "C" + d.source.x +  "," + (d.source.y + d.target.y) / 2
-      + " " + d.target.x + "," + (d.source.y + d.target.y) / 2
-      + " " + d.target.x + "," + d.target.y;
+  return `M${d.source.x},${d.source.y
+       }C${d.source.x},${(d.source.y + d.target.y) / 2
+       } ${d.target.x},${(d.source.y + d.target.y) / 2
+       } ${d.target.x},${d.target.y}`;
 }
 
 export function linkVertical(d) {
-  return "M" + d.source.x + "," + d.source.y
-      + "C" + (d.source.x + d.target.x) / 2 + "," + d.source.y
-      + " " + (d.source.x + d.target.x) / 2 + "," + d.target.y
-      + " " + d.target.x + "," + d.target.y;
+  return `M${d.source.x},${d.source.y
+       }C${(d.source.x + d.target.x) / 2},${d.source.y
+       } ${(d.source.x + d.target.x) / 2},${d.target.y
+       } ${d.target.x},${d.target.y}`;
 }
 
 export const uniques = (data, name) => data.reduce(
@@ -74,10 +74,6 @@ export function binPerName(data, name) {
   return histogram(data);
 }
 
-// export const colorScale = d3.scaleOrdinal().range(['#EF3B39', '#FFCD05', '#69C9CA', '#666699', '#CC3366',
-//   '#0099CC', '#999999', '#FBF5A2', '#6FE4D0', '#009966', '#C1272D', '#F79420', '#445CA9',
-//   '#A67C52', '#016735', '#F1AAAF', '#C9A8E2', '#F190AC', '#7BD2EA',
-//   '#DBD6B6']);
 export const colorScale = d3.scaleOrdinal().range(d3.schemeCategory10);
 
 export function fixateColors(data, key) {
@@ -199,16 +195,14 @@ export const valueComparator = (a, b) => b.value - a.value;
 export const descendantsDarker = (d, color, invert = false, dk = 5) =>
 d3.color(color(d.ancestors()[d.ancestors().length - 2].id.split(' ').pop()))[invert ? 'brighter' : 'darker'](d.depth / dk);
 
-async function GoTChart(chartType, dataUri, ...args) {
+export async function GoTChart(chartType, dataUri, ...args) {
   async function loadData(uri) {
     if (uri.match(/\.csv$/)) {
-      this.data = d3.csvParse(await (await fetch(uri)).text());
+      return d3.csvParse(await (await fetch(uri)).text());
     } else if (uri.match(/\.json$/)) {
-      this.data = await (await fetch(uri)).json();
+      return (await fetch(uri)).json();
     }
-
-    return this.data;
-  };
+  }
 
   const westerosChart = chartFactory({
     id: `chart--${chartType}`,
@@ -218,11 +212,11 @@ async function GoTChart(chartType, dataUri, ...args) {
 
   const data = await loadData(dataUri);
 
-  this[chartType].call(this, data, ...args)
-  westerosChart.innerHeight = westerosChart.height - westerosChart.margin.top - westerosChart.margin.bottom - westerosChart.padding.top - westerosChart.padding.bottom;
-  westerosChart.innerWidth = westerosChart.width - westerosChart.margin.left - westerosChart.margin.right - westerosChart.padding.left - westerosChart.padding.right;
+  GoTChart[chartType].call(westerosChart, data, ...args);
+  westerosChart.innerHeight = westerosChart.height - westerosChart.margin.top -
+    westerosChart.margin.bottom - westerosChart.padding.top - westerosChart.padding.bottom;
+  westerosChart.innerWidth = westerosChart.width - westerosChart.margin.left -
+    westerosChart.margin.right - westerosChart.padding.left - westerosChart.padding.right;
 
   return westerosChart;
-};
-
-export GoTChart;
+}

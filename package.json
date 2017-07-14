@@ -85,6 +85,7 @@
     "start": "nodemon --watch gulpfile.babel.js --exec 'gulp watch'"
   },
   "dependencies": {
+    "d3": "^4.9.1",
     "d3-svg-legend": "^2.24.1"
   }
 }
