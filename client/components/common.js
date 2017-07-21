@@ -14,7 +14,7 @@ const protoChart = {
 export default function chartFactory(opts, proto = protoChart) {
   const chart = Object.assign({}, proto, opts);
 
-  chart.svg = d3.select('body')
+  chart.svg = d3.select(opts.container || 'body')
     .append('svg')
     .attr('id', chart.id || 'chart')
     .attr('width', chart.width - chart.margin.right)
@@ -195,7 +195,7 @@ export const valueComparator = (a, b) => b.value - a.value;
 export const descendantsDarker = (d, color, invert = false, dk = 5) =>
 d3.color(color(d.ancestors()[d.ancestors().length - 2].id.split(' ').pop()))[invert ? 'brighter' : 'darker'](d.depth / dk);
 
-export async function GoTChart(chartType, dataUri, ...args) {
+export async function GoTChart(chartType, dataUri, args) {
   async function loadData(uri) {
     if (uri.match(/\.csv$/)) {
       return d3.csvParse(await (await fetch(uri)).text());
@@ -204,15 +204,14 @@ export async function GoTChart(chartType, dataUri, ...args) {
     }
   }
 
-  const westerosChart = chartFactory({
-    id: `chart--${chartType}`,
-    margin: { left: 50, right: 50, top: 50, bottom: 50 },
-    padding: { left: 10, right: 10, top: 10, bottom: 10 },
-  });
+  const westerosChart = chartFactory(Object.assign({}, {
+    margin: args.margin || { left: 50, right: 50, top: 50, bottom: 50 },
+    padding: args.padding || { left: 10, right: 10, top: 10, bottom: 10 },
+  }, args));
 
   const data = await loadData(dataUri);
 
-  GoTChart[chartType].call(westerosChart, data, ...args);
+  GoTChart[chartType].call(westerosChart, data, args);
   westerosChart.innerHeight = westerosChart.height - westerosChart.margin.top -
     westerosChart.margin.bottom - westerosChart.padding.top - westerosChart.padding.bottom;
   westerosChart.innerWidth = westerosChart.width - westerosChart.margin.left -

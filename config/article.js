@@ -11,10 +11,10 @@ export default () => ({ // eslint-disable-line
   //       new Date('2016-05-17T17:11:22Z')
   publishedDate: new Date(),
 
-  headline: 'Visualising Game Of Thrones',
+  headline: 'A Game Of Figures',
 
   // summary === standfirst (Summary is what the content API calls it)
-  summary: 'With season 7 starting this Sunday, we crunch the numbers ',
+  summary: 'Crunching the data to see who will live to see the end of Game Of Thrones\' final season — and who will pay the iron price',
 
   topic: {
     name: 'Life & Arts',

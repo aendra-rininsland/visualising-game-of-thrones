@@ -86,6 +86,9 @@
   },
   "dependencies": {
     "d3": "^4.9.1",
-    "d3-svg-legend": "^2.24.1"
+    "d3-ajacency-matrix-layout": "github:micahstubbs/d3-adjacency-matrix-layout",
+    "d3-svg-legend": "^2.24.1",
+    "forceInABox": "github:aendrew/forceInABox",
+    "g-chartcolour": "^0.8.11"
   }
 }

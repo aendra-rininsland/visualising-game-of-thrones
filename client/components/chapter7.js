@@ -1,13 +1,18 @@
 import * as d3 from 'd3';
 import * as legend from 'd3-svg-legend';
+import forceInABox from 'forceInABox';
+import * as colors from 'g-chartcolour';
+import { adjacencyMatrixLayout } from 'd3-ajacency-matrix-layout';
 import {
-  colorScale as color,
+  // colorScale as color,
   tooltip,
   connectionMatrix,
   uniques,
   fixateColors,
   GoTChart,
 } from './common';
+
+const color = d3.scaleOrdinal().range(colors.categorical_line);
 
 // import {
 //   fixateColors,
@@ -105,7 +110,7 @@ GoTChart.pie = function Pie(_data) {
 //   bar.call(tooltip(d => `${d.x0}: ${d.length} deaths`, this.container));
 // };
 
-GoTChart.stack = function Stack({ data }, isStream = false) {
+GoTChart.stack = function Stack({ data }, { isStream }) {
   const episodesPerSeason = 10;
   const totalSeasons = 6;
   const seasons = d3.nest()
@@ -222,15 +227,61 @@ GoTChart.chord = function Chord(_data) {
   group.call(tooltip(d => majorSources[d.index], this.container));
 };
 
-GoTChart.force = function Force(_data) {
+GoTChart.adjacency = function Adjacency(_data) {
   const nodes = uniques(
     _data.map(d => d.Target).concat(_data.map(d => d.Source)),
     d => d)
-    .map(d => ({ id: d, total: _data.filter(e => e.Source === d).length }));
+    .map(d => ({ id: d, total: _data.filter(e => e.Source === d).length }))
+    .filter(d => d.total > 0);
 
   fixateColors(nodes, 'id');
 
-  const links = _data.map(d => ({ source: d.Source, target: d.Target, value: d.Weight }));
+  const links = _data.map(d => ({ source: d.Source, target: d.Target, value: +d.Weight }));
+  const edgeWeightScale = d3.scaleLinear().domain(d3.extent(links, d => d.value)).range([0, 1])
+  const adjacencyMatrix = adjacencyMatrixLayout()
+    .size([this.width, this.height])
+    .nodes(nodes)
+    .links(links)
+    .directed(false)
+    .edgeWeight(d => edgeWeightScale(d.value))
+    .nodeID(d => d.id);
+
+  const matrixData = adjacencyMatrix();
+
+  console.log(matrixData)
+
+  const someColors = d3.scaleOrdinal()
+  .range(d3.schemeCategory20b);
+
+  console.dir(matrixData.filter(d => d.weight));
+
+  this.container
+    .selectAll('rect')
+    .data(matrixData)
+    .enter()
+    .append('rect')
+      .attr('width', d => d.width)
+      .attr('height', d => d.height)
+      .attr('x', d => d.x)
+      .attr('y', d => d.y)
+      .style('stroke', 'black')
+      .style('stroke-width', '1px')
+      .style('stroke-opacity', 0.1)
+      .style('fill', d => someColors(d.source.group))
+      .style('fill-opacity', d => d.weight);
+
+  this.container
+    .call(adjacencyMatrix.xAxis);
+
+  this.container
+    .call(adjacencyMatrix.yAxis);
+};
+
+GoTChart.force = async function Force(_data) {
+  const nodes = d3.csvParse(await (await fetch('data/asoiaf-all-nodes.csv')).text());
+  fixateColors(nodes, 'modularity_class');
+
+  const links = _data.map(d => ({ source: d.Source, target: d.Target, value: +d.weight }));
   const link = this.container.append('g').attr('class', 'links')
     .selectAll('line')
     .data(links)
@@ -239,14 +290,14 @@ GoTChart.force = function Force(_data) {
       .attr('stroke', d => color(d.source))
       .attr('stroke-width', d => Math.sqrt(d.value));
 
-  const radius = d3.scaleLinear().domain(d3.extent(nodes, d => d.total)).range([4, 20]);
+  const radius = d3.scaleLinear().domain(d3.extent(nodes, d => +d.eigencentrality)).range([4, 20]);
 
   const node = this.container.append('g').attr('class', 'nodes')
     .selectAll('circle')
     .data(nodes)
       .enter()
       .append('circle')
-      .attr('r', d => radius(d.total))
+      .attr('r', d => radius(d.eigencentrality))
       .attr('fill', d => color(d.id))
       .call(d3.drag()
         .on('start', dragstart)
@@ -255,9 +306,24 @@ GoTChart.force = function Force(_data) {
 
   node.call(tooltip(d => d.id, this.container));
 
+  // const groupingForce = forceInABox()
+  //   .strength(0.1) // Strength to foci
+  //   .template('force') // Either treemap or force
+  //   .groupBy(d => d.modularity_class) // Node attribute to group
+  //   .links(links) // The graph links. Must be called after setting the grouping attribute
+  //   .enableGrouping(true)
+  //   .nodeSize(5) // How big are the nodes to compute the force template
+  //   .forceCharge(-200) // Separation between nodes on the force template
+  //   .size([this.width, this.height]); // Size of the chart
+
   const sim = d3.forceSimulation()
-    .force('link', d3.forceLink().id(d => d.id).distance(200))
+    .force('link', d3.forceLink()
+      .id(d => d.id)
+      .distance(200)
+      // .strength(groupingForce.getLinkStrength)
+    )
     .force('charge', d3.forceManyBody())
+    // .force('group', groupingForce)
     .force('center', d3.forceCenter(this.width / 2, this.height / 2));
 
   sim.nodes(nodes).on('tick', ticked);

@@ -51,7 +51,7 @@ GoTChart.tree = function Tree(_data) {
 
   const layout = d3.tree()
     .size([
-      this.width,
+      this.width - 100,
       this.height,
     ]);
 
@@ -59,13 +59,11 @@ GoTChart.tree = function Tree(_data) {
 
   const line = d3.line().curve(d3.curveBasis);
 
-  // Links
-  const links = layout(root)
-    .descendants()
-    .slice(1);
-
-  chart.selectAll('.link')
-    .data(links)
+  const links = chart.selectAll('.link')
+    .data(layout(root)
+        .descendants()
+        .slice(1)
+      )
       .enter()
       .append('path')
       .attr('fill', 'none')
@@ -100,6 +98,15 @@ GoTChart.tree = function Tree(_data) {
     .call(legendGenerator);
 
   nodes.call(tooltip(d => d.data.itemLabel, this.container));
+
+  nodes.each(function (d) {
+    if (d.id === 'Westeros') { d3.select(this).remove(); }
+  });
+
+  links.each(function (d) {
+    // console.dir(d);
+    if (d.data.fatherLabel === 'Westeros') { d3.select(this).remove(); }
+  });
 };
 
 GoTChart.cluster = function Cluster(_data) {

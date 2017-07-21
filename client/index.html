@@ -5,9 +5,36 @@
 
 {% markdown %}
 
-Very few TV shows in history have produced the level of dedicated fanbase that Game Of Thrones — entering its seventh and final season this Sunday — has managed to cultivate. As a community, Game Of Thrones fans have created a plethora of interesting data about both the TV show itself and the books the show is based off. Although using such data to predict the outcome of such a suspenseful (and, frankly, violent) piece of entertainment is a daunting prospect, from the data we can get a better sense of what life in Westeros is like, which of the show's hundreds of characters are the ones who have an actual shot at the throne — and which characters may meet their ends in the show's typically-gruesome fashion.
-
 *Be forewarned that there may be spoilers below for those who haven't already watched to the end of season six.*
+
+Game Of Thrones is known particularly well for the very striking manner in which it nonchalantly kills off major characters. Now into its seventh season, the show has poisoned, stabbed, sliced, beheaded, disemboweled, crushed, burnt and fed to dogs a shocking number of people, often in ways that are surprisingly gruesome for a mainstream television show. In the last season alone there were 40 characters killed, over double season 4's respectable body count of 17.
+
+<figure id="deaths-by-season-steamgraph"></figure>
+<caption>Game Of Thrones character deaths by episode and season</caption>
+
+All roads lead to season 7, however: the Starks seeking to regain control of the north; the Queen of Dragons sailing her fleet towards King's Landing in the south; an assassin with a long list of grudges to settle; and meanwhile an existential threat to all living things bearing down on the citizenry of Westeros. Given all of these factors, no character is safe — the very first scene of season 7 alone probably gave season 6 a run for its money in terms of casualties, and things are expected to only get bloodier as the show nears its finale on 27 August.
+
+There are two questions on the minds of the show's many fans. The first is who will reach the top of the iron throne, while the second question asks who will be slaughtered for that to happen. Several betting markets have given odds on the first, with Daenerys Targaryen and Jon Snow the clear favourites to rule Westeros:
+
+
+<div data-o-component="o-expander" class="o-expander items" data-o-expander-shrink-to="10" data-o-expander-count-selector="tr">
+  <figure id="betting-odds"></figure>
+	<button class="o-expander__toggle o--if-js">Toggle</button>
+</div>
+
+While Ladbrokes, Sky Bet and Sporting Bet have similar odds for most of the main characters, there's not a great deal of consensus around the show's many minor characters, any of whom could also take the throne — remember that the show started in the aftermath of a commoner successfully rebelling against a mad king. For instance, Brienne of Tarth is given a fairly-reasonable 60/1 at Ladbrokes but 1000/1 at Sporting Bet. Although the probability of a minor or as-of-yet-unannounced character winning the Game Of Thrones is pretty remote, making an informed bet on the outcome of the show's final season could indeed be fairly lucrative.
+
+TKTK Quote from one of the bookies?
+
+Luckily, if one is inspired to beat the odds through an educated analysis of the show, the show's fanbase has created many datasets to work with. One such group analysing Game Of Thrones data is that from Technische Universität München, which has [produced an elaborate machine learning model for predicting who will die in the show](https://www.got.show). By creating a list of features consistent across all the characters in the show (such as gender, marriage status and nobel house belonged to) "A Song Of Ice and Data" attempts to determine whether a given character is alive and/or dead, with impressively accurate results: in terms of predicting whether a character is alive, their model scores a respectable 85% precision. When they predicted that Jon Snow was alive at the end of season five, people sat up and took notice.
+
+TKTK quote re: project success
+
+Trained using a wide variety of publicly-available data, much of their model is based on data from the book series, which the TV show has long since outpaced. Although the TV show's writing staff now have more freedom to veer away from the canon established by the books (not to mention the undead "white walkers", who might finally have a substantive role this season), the "A Song of Ice and Data" team thinks these factors ultimately won't have much of an effect in terms of predicting outcomes in season 7.
+
+TKTK quote re: "white walker effects"
+
+Curiously, their model currently predicts that Cersei Lannister is one of the most likely to survive (despite a plethora of commentary online already speculating how she'll die this season), while also predicting Daenerys Targaryen has a 95% chance of being offed by one of the many others vying for the throne. However, with the addition of a brand new existential threat to all of Westeros finally coming to a head this season, the amount of uncertainty has never been higher.
 
 {# START MID AD SLOT
     You can move this wherever it works best in your page's design.
@@ -16,15 +43,16 @@ Very few TV shows in history have produced the level of dedicated fanbase that G
 {% if flags.ads %}{{ macros.middleAd() }}{% endif %}
 {# END MID AD SLOT #}
 
-Nobody has put more effort into analysing Game Of Thrones data than the group from Technische Universität München, which has [produced an elaborate machine learning model for predicting who will die in the show](https://www.got.show). By creating a list of features consistent across all the characters in the show — such as gender, marriage status and nobel house belonged to — their model attempts to determine whether a given character is alive and/or dead (some characters — such as Jon Snow — are actually both), with mixed results: in terms of predicting whether a character is alive, their model scores a respectable 85% precision. Predicting whether a character is dead, however, tends to be slightly less accurate than a coin flip.
+The downside of evaluating the Game Of Thrones world from a statistical standpoint is that it ignores the political intrigues underpinning much of the plot. Many of the show's characters are hopeless when given a sword, however are incredibly powerful due to their connections and spheres of influence. Another project, this time by Andrew Beveridge of Macalester College, uses network science to unearth hidden threads of influence in the show.
 
-TKTKTK quote from got.show people re: machine learning
+TKTK Beveridge quote re: network science and GoT, comparing it to Harry Potter
 
-Curiously, their model currently predicts that Cersei Lannister is one of the most likely to survive (despite a plethora of commentary online already speculating how she'll die this season), while also predicting Daenerys Targaryen has a 95% chance of being offed by one of the many others vying for the throne. However, with the addition of a brand new existential threat to all of Westeros finally coming to a head this season, the amount of uncertainty has never been higher.
+Initially posed as a question by one of his students, Beveridge used transcripts from the books and TV show to identify characters discussed within a certain number of words from each other. This creates a graph depicting how strongly characters relate to each other, and which characters act as bridges between disparate groups in the show.
 
-TKTKTK another got.show quote re: white walker effect
 
-TKTKTK map of westeros from http://viewers-guide.hbo.com/game-of-thrones
+<section id="network-graph"></section>
+
+TKTKTK another Beveridge quote
 
 
 
